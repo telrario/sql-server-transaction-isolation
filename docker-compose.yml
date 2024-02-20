@@ -1,0 +1,15 @@
+version: '3'
+services:
+  phyton.dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '.:/app'
+    networks:
+      - sail
+networks:
+  sail:
+    driver: bridge
