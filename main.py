@@ -4,8 +4,8 @@ from faker import Faker
 
 # establish a sql server connection using env variables
 conn_string = (
-    f'DRIVER={{SQL Server}}; SERVER={os.environ["DB_HOST"]}; DATABASE={os.environ["DB_NAME"]};'
-    f'UID={os.environ["USER_NAME"]}; PWD={os.environ["PASSWORD"]};'
+    f'DRIVER={{SQL Server}}; SERVER={os.getenv("DB_HOST")}; DATABASE={os.getenv("DB_NAME")};'
+    f'UID={os.getenv("USER_NAME")}; PWD={os.getenv("PASSWORD")};'
 )
 conn = pyodbc.connect(conn_string)
 

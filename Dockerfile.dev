@@ -1,6 +1,8 @@
-FROM python
+FROM python:alpine
 
 WORKDIR /app
+
+RUN apk add gcc libc-dev g++ libffi-dev libxml2 unixodbc-dev
 
 RUN pip install faker pyodbc
 
