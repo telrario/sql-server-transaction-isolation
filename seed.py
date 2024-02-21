@@ -2,8 +2,8 @@ import pyodbc
 import os
 import logging
 import time
+from faker import Faker
 from dotenv import load_dotenv
-from prettytable import PrettyTable
 
 start_time = time.time()
 load_dotenv()
@@ -20,32 +20,29 @@ conn_string = (
 )
 conn = pyodbc.connect(conn_string)
 
-# Open the file queries/report_status.sql and get the contents as string
-with open("queries/report_status.sql", "r") as file:
-    sql_query = file.read()
-
+# create a cursor from the connection
 cursor = conn.cursor()
-cursor.execute(sql_query)
-rows = cursor.fetchall()
 
-# Create a PrettyTable instance
-pt = PrettyTable()
+# initiate faker
+fake = Faker()
 
-# Fetch the column names
-col_names = [column[0] for column in cursor.description]
+# seeding script
+for _ in range(1000):  # change the range for the number of records you want to generate
+    name = fake.first_name()
+    last_name = fake.last_name()
+    birth_date = fake.date_of_birth(minimum_age=16, maximum_age=75)
+    sex = fake.random_element(["M", "F"])
 
-# Set the table field names to the column names
-pt.field_names = col_names
+    cursor.execute(
+        f"INSERT INTO person (name, last_name, birth_date, sex, status) values (?, ?, ?, ?, 'unknown ')",
+        name, last_name, birth_date, sex
+    )
 
-# Add each row from rows
-for row in rows:
-    pt.add_row(row)
-
-# Print table as string
-print(pt)
-
+# committing the transaction and closing the connection
+conn.commit()
 conn.close()
 
 end_time = time.time()
 execution_time = end_time - start_time
 logging.info(f"Execution time: {execution_time} seconds")
+logging.info("1000 persons generated")
